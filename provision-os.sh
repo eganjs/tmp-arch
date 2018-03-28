@@ -12,10 +12,6 @@ install_pkg() {
   pacman -S --needed --noconfirm ${1}
 }
 
-rm_element() {
-
-}
-
 sync_pkg_db() {
   pacman -Syy
 }
