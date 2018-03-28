@@ -59,13 +59,12 @@ configure_device_partitioning() {
   echo
   echo "Configuring device partitioning..."
   select_device() {
-    devices=(`lsblk -dnlp | awk '{print $1,$4}'`); # -I 8
     echo
     echo "Available devices:"
-    echo "${devices[@]}" | column -t
+    lsblk -dnlp | awk '{print $1,$4}' | column -t
     echo
     echo "Select a device to partition:"
-    devices=(`echo "${devices[@]}" | awk '{print $1}'`);
+    devices=(`lsblk -dnlp | awk '{print $1}'`);
     select DEVICE in "${devices[@]}"; do
       break
     done
