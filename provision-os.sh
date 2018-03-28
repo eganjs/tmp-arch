@@ -55,21 +55,22 @@ detect_uefi() {
 }
 detect_uefi
 
+select_device() {
+  devices=$(lsblk -dnlp -I 8 | awk '{print $1,$4}')
+  echo
+  echo "Available devices:"
+  echo ${devices} | column -t
+  echo
+  echo "Select a device to partition:"
+  devices=(`echo ${devices} | awk '{print $1}'`)
+  select DEVICE in ${devices[@]}; do
+    break
+  done
+}
+
 configure_device_partitioning() {
   echo
   echo "Configuring device partitioning..."
-  select_device() {
-    devices=$(lsblk -dnlp | awk '{print $1,$4}')
-    echo
-    echo "Available devices:"
-    echo ${devices} | column -t
-    echo
-    echo "Select a device to partition:"
-    devices=(`echo ${devices} | awk '{print $1}'`)
-    select DEVICE in ${devices[@]}; do
-      break
-    done
-  }
   select_device
   gdisk ${DEVICE}
   format_partitions() {
