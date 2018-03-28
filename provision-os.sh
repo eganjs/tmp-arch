@@ -68,7 +68,7 @@ configure_disk() {
     lsblk -dnlp -I 8 | awk '{print $1,$4}' | column -t
     echo
     echo "Select a device to partition:"
-    devices=(`lsblk -dnlp -I 8 | awk '{print $1}'`);
+    devices=(`lsblk -dnlp -I 8 | awk '{print $1}'`)
     select DEVICE in ${devices[@]}; do
       echo "Device ${DEVICE} selected"
       break
@@ -119,16 +119,22 @@ configure_disk() {
     partitions=(`lsblk -nlp ${DEVICE} | awk '$6 == "part" {print $1}'`)
     select partition in ${partitions[@]}; do
       ROOT_DEVICE=${partition}
-      mount ${ROOT_DEVICE} ${MOUNT_POINT}
+      root_mount_point=${MOUNT_POINT}
+      mkdir -p ${root_mount_point}
+      mount ${ROOT_DEVICE} ${root_mount_point}
       unset partitions[${REPLY}]
+      partitions=(${partitions[@]})
       break
     done
     echo
     echo "Select a partition to mount as boot (/boot):"
     select partition in ${partitions[@]}; do
       BOOT_DEVICE=${partition}
-      mount ${BOOT_DEVICE} "${MOUNT_POINT}/boot"
+      boot_mount_point="${MOUNT_POINT}/boot"
+      mkdir -p ${boot_mount_point}
+      mount ${BOOT_DEVICE} ${boot_mount_point}
       unset partitions[${REPLY}]
+      partitions=(${partitions[@]})
       break
     done
   }
