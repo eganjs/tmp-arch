@@ -42,8 +42,9 @@ configure_device_partitioning() {
   echo "Configuring device partitioning..."
   select_device() {
     devices=$(lsblk -dlnp -I 8)
+    echo
     echo "Available devices:"
-    ${devices} | awk '{print $1,$4}' | column -t
+    echo ${devices} | awk '{print $1,$4}' | column -t
     echo
     echo "Select a device to partition:"
     devices=(`echo ${devices} | awk '{print $1}'`)
@@ -55,3 +56,4 @@ configure_device_partitioning() {
   gdisk ${DEVICE}
 }
 configure_device_partitioning
+
