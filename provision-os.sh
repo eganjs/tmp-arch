@@ -15,12 +15,14 @@ sync_pkg_db() {
 sync_pkg_db
 
 set_keymap(){
+  echo
   echo "Setting keymap..."
   loadkeys "$KEYMAP"
 }
 set_keymap
 
 configure_mirrorlist(){
+  echo
   echo "Configuring mirrorlist..."
   country_codes=("NL", "CH") # Netherlands, Switzerland
   tmp_file=$(mktemp --suffix=-mirrorlist)
@@ -34,12 +36,14 @@ configure_mirrorlist(){
 configure_mirrorlist
 
 set_editor(){
+  echo
   echo "Setting editor..."
   install_pkg "$EDITOR"
 }
 set_editor
 
 detect_uefi() {
+  echo
   echo "Checking for UEFI..."
   if [ -d "/sys/firmware/efi/efivars" ]; then
     echo "UEFI detected"
@@ -51,6 +55,7 @@ detect_uefi() {
 detect_uefi
 
 configure_device_partitioning() {
+  echo
   echo "Configuring device partitioning..."
   select_device() {
     devices=$(lsblk -dnlp -I 8 | awk '{print $1,$4}')
@@ -72,10 +77,11 @@ configure_device_partitioning() {
     echo
     echo "Available partitions:"
     echo ${partitions} | column -t
+    partitions=(`echo ${partitions} | awk '{print $1}'`)
     echo
-    partitions=$(echo ${partitions} | awk '{print $1}')
     echo "Configuring partition formatting..."
     for partition in ${partitions[@]}; do
+      echo
       echo "Select format for device: ${partition}"
       select option in ${options[@]}; do
         case $REPLY in
