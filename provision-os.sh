@@ -69,27 +69,30 @@ configure_device_partitioning() {
   format_partitions() {
     options=("boot" "swap" "ext4" "skip")
     partitions=$(lsblk -nlp ${DEVICE} | grep part | awk '{print $1,$4}')
-    partition_devices=$(echo ${partitions} | awk '{print $1}')
+    echo
+    echo "Available partitions:"
+    echo ${partitions} | column -t
+    echo
+    partitions=$(echo ${partitions} | awk '{print $1}')
     echo "Configuring partition formatting..."
-    for partition_device in ${partition_devices[@]}; do
-      partition_info=$(echo ${partitions} | grep ${partition_device})
-      echo "Select format for device: ${partition_info}"
+    for partition in ${partitions[@]}; do
+      echo "Select format for device: ${partition}"
       select option in ${options[@]}; do
         case $REPLY in
           1)
-            echo "Formatting ${partition_device} as fat32"
-            mkfs.vfat -F32 ${partition_device}
+            echo "Formatting ${partition} as fat32"
+            mkfs.vfat -F32 ${partition}
             break
             ;;
           2)
-            echo "Formatting ${partition_device} as swap"
-            mkswap ${partition_device}
+            echo "Formatting ${partition} as swap"
+            mkswap ${partition}
             swapon
             break
             ;;
           3)
-            echo "Formatting ${partition_device} as ext4"
-            mkfs.ext4 -F ${partition_device}
+            echo "Formatting ${partition} as ext4"
+            mkfs.ext4 -F ${partition}
             break
             ;;
           4)
