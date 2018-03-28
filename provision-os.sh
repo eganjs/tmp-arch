@@ -125,7 +125,7 @@ configure_disk() {
         REPLY=$(( $REPLY - 1 ))
         unset partitions[REPLY]
         partitions=("${partitions[@]}")
-        if [[ "$1" -eq "root" ]]; then
+        if [[ "$1" == "root" ]]; then
           ROOT_DEVICE=${device}
         fi
         break
