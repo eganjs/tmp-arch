@@ -72,7 +72,7 @@ configure_device_partitioning() {
     partition_devices=$(echo ${partitions} | awk '{print $1}')
     echo "Configuring partition formatting..."
     for partition_device in ${partition_devices[@]}; do
-      echo "Select format for device: $(echo partitions | grep ${partition_device})"
+      echo "Select format for device: $(echo ${partitions} | grep `${partition_device}`)"
       select option in ${options[@]}; do
         case $REPLY in
           1)
@@ -83,6 +83,7 @@ configure_device_partitioning() {
           2)
             echo "Formatting ${partition_device} as swap"
             mkswap ${partition_device}
+            swapon
             break
             ;;
           3)
