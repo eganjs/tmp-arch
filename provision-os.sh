@@ -68,7 +68,7 @@ configure_device_partitioning() {
   gdisk ${DEVICE}
   format_partitions() {
     options=("boot" "swap" "ext4" "skip")
-    partitions=$(lsblk -nlp ${DEVICE} | grep part | awk '{print $1,$4}')
+    partitions=$(lsblk -nlp ${DEVICE} | tail -n +2 | awk '{print $1,$4}')
     echo
     echo "Available partitions:"
     echo ${partitions} | column -t
