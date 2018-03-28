@@ -4,6 +4,7 @@ KEYMAP="uk"
 EDITOR="vim"
 DEVICE=""
 UEFI=0
+MOUNT="/mnt"
 
 install_pkg() {
   pacman -S --needed --noconfirm ${1}
@@ -73,7 +74,7 @@ configure_device_partitioning() {
   gdisk ${DEVICE}
   format_partitions() {
     options=("boot" "swap" "ext4" "skip")
-    partitions=$(lsblk -nlp ${DEVICE} | tail -n +2 | awk '{print $1,$4}')
+    partitions=$(lsblk -nlp ${DEVICE} | awk '$6 == "part" {print $1,$4}')
     echo
     echo "Available partitions:"
     echo ${partitions} | column -t
