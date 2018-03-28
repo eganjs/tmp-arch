@@ -5,7 +5,6 @@ EDITOR="vim"
 DEVICE=""
 UEFI=0
 ROOT_DEVICE=""
-BOOT_DEVICE=""
 MOUNT_POINT="/mnt"
 
 install_pkg() {
@@ -114,36 +113,27 @@ configure_disk() {
   }
   format_partitions
   mount_partitions() {
-    echo
-    echo "Select a partition to mount as root (/):"
     partitions=(`lsblk -nlp ${DEVICE} | awk '$6 == "part" {print $1}'`)
-    select partition in ${partitions[@]}; do
-      ROOT_DEVICE=${partition}
-      root_mount_point=${MOUNT_POINT}
-      mkdir -p ${root_mount_point}
-      mount ${ROOT_DEVICE} ${root_mount_point}
-      REPLY=$(( $REPLY - 1 ))
-      unset partitions[REPLY]
-      partitions=("${partitions[@]}")
-      break
-    done
-    echo
-    echo "Select a partition to mount as boot (/boot):"
-    select partition in ${partitions[@]}; do
-      BOOT_DEVICE=${partition}
-      boot_mount_point="${MOUNT_POINT}/boot"
-      mkdir -p ${boot_mount_point}
-      mount ${BOOT_DEVICE} ${boot_mount_point}
-      REPLY=$(( $REPLY - 1 ))
-      unset partitions[REPLY]
-      partitions=("${partitions[@]}")
-      break
-    done
-    echo
-    echo "Remaining:"
-    for partition in ${partitions[@]}; do
-      echo "${partition} is still here"
-    done
+    mount_partition() {
+      echo
+      echo "Select a partition to mount as $1 ($2):"
+      select partition in ${partitions[@]}; do
+        device=${partition}
+        mount_point="${MOUNT_POINT}$2"
+        mkdir -p ${mount_point}
+        mount ${device} ${mount_point}
+        REPLY=$(( $REPLY - 1 ))
+        unset partitions[REPLY]
+        partitions=("${partitions[@]}")
+        if [[ "$1" -eq "root" ]]; then
+          ROOT_DEVICE=${device}
+        fi
+        break
+      done
+    }
+    mount_partition "root" "/"
+    mount_partition "boot" "/boot"
+    echo "R: ${ROOT_DEVICE}"
   }
   mount_partitions
 }
