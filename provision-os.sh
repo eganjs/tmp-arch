@@ -123,7 +123,7 @@ configure_disk() {
       mkdir -p ${root_mount_point}
       mount ${ROOT_DEVICE} ${root_mount_point}
       unset partitions[REPLY]
-      partitions=('${partitions[@]}')
+      partitions=("${partitions[@]}")
       break
     done
     echo
@@ -134,7 +134,7 @@ configure_disk() {
       mkdir -p ${boot_mount_point}
       mount ${BOOT_DEVICE} ${boot_mount_point}
       unset partitions[REPLY]
-      partitions=('${partitions[@]}')
+      partitions=("${partitions[@]}")
       break
     done
     echo
