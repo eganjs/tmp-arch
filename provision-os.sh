@@ -72,7 +72,7 @@ configure_device_partitioning() {
     partition_devices=$(echo ${partitions} | awk '{print $1}')
     echo "Configuring partition formatting..."
     for partition_device in ${partition_devices[@]}; do
-      partition_info=$(echo ${partitions} | grep `${partition_device}`)
+      partition_info=$(echo ${partitions} | grep ${partition_device})
       echo "Select format for device: ${partition_info}"
       select option in ${options[@]}; do
         case $REPLY in
