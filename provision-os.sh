@@ -122,8 +122,8 @@ configure_disk() {
       root_mount_point=${MOUNT_POINT}
       mkdir -p ${root_mount_point}
       mount ${ROOT_DEVICE} ${root_mount_point}
-      unset partitions[${REPLY}]
-      partitions=(${partitions[@]})
+      unset partitions[REPLY]
+#      partitions=(${partitions[@]})
       break
     done
     echo
@@ -133,9 +133,14 @@ configure_disk() {
       boot_mount_point="${MOUNT_POINT}/boot"
       mkdir -p ${boot_mount_point}
       mount ${BOOT_DEVICE} ${boot_mount_point}
-      unset partitions[${REPLY}]
+      unset partitions[REPLY]
       partitions=(${partitions[@]})
       break
+    done
+    echo
+    echo "Remaining:"
+    for partition in ${partitions[@]}; do
+      echo "${partition} is still here"
     done
   }
   mount_partitions
