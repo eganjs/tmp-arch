@@ -56,7 +56,7 @@ detect_uefi() {
 detect_uefi
 
 select_device() {
-  devices=$(lsblk -dnlp -I 8 | awk '{print $1,$4}')
+  devices=$(lsblk -dnlp | awk '{print $1,$4}')
   echo
   echo "Available devices:"
   echo ${devices} | column -t
