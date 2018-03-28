@@ -78,7 +78,9 @@ configure_device_partitioning() {
     echo
     echo "Available partitions:"
     echo ${partitions} | column -t
+    echo ${partitions}
     partitions=(`echo ${partitions} | awk '{print $1}'`)
+    echo ${partitions}
     echo
     echo "Configuring partition formatting..."
     for partition in ${partitions[@]}; do
