@@ -122,6 +122,7 @@ configure_disk() {
       root_mount_point=${MOUNT_POINT}
       mkdir -p ${root_mount_point}
       mount ${ROOT_DEVICE} ${root_mount_point}
+      REPLY=$(( $REPLY - 1 ))
       unset partitions[REPLY]
       partitions=("${partitions[@]}")
       break
@@ -133,6 +134,7 @@ configure_disk() {
       boot_mount_point="${MOUNT_POINT}/boot"
       mkdir -p ${boot_mount_point}
       mount ${BOOT_DEVICE} ${boot_mount_point}
+      REPLY=$(( $REPLY - 1 ))
       unset partitions[REPLY]
       partitions=("${partitions[@]}")
       break
