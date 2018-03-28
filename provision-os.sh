@@ -4,10 +4,16 @@ KEYMAP="uk"
 EDITOR="vim"
 DEVICE=""
 UEFI=0
-MOUNT="/mnt"
+ROOT_DEVICE=""
+BOOT_DEVICE=""
+MOUNT_POINT="/mnt"
 
 install_pkg() {
   pacman -S --needed --noconfirm ${1}
+}
+
+rm_element() {
+
 }
 
 sync_pkg_db() {
@@ -55,9 +61,11 @@ detect_uefi() {
 }
 detect_uefi
 
-configure_device_partitioning() {
+configure_disk() {
   echo
-  echo "Configuring device partitioning..."
+  echo "Configuring disk..."
+  echo
+  echo "Select a disk to partition and install to"
   select_device() {
     echo
     echo "Available devices:"
@@ -65,7 +73,7 @@ configure_device_partitioning() {
     echo
     echo "Select a device to partition:"
     devices=(`lsblk -dnlp -I 8 | awk '{print $1}'`);
-    select DEVICE in "${devices[@]}"; do
+    select DEVICE in ${devices[@]}; do
       echo "Device ${DEVICE} selected"
       break
     done
@@ -109,5 +117,25 @@ configure_device_partitioning() {
     done
   }
   format_partitions
+  mount_partitions() {
+    echo
+    echo "Select a partition to mount as root (/):"
+    partitions=(`lsblk -nlp ${DEVICE} | awk '$6 == "part" {print $1}'`)
+    select partition in ${partitions[@]}; do
+      ROOT_DEVICE=${partition}
+      mount ${ROOT_DEVICE} ${MOUNT_POINT}
+      unset partitions[${REPLY}]
+      break
+    done
+    echo
+    echo "Select a partition to mount as boot (/boot):"
+    select partition in ${partitions[@]}; do
+      BOOT_DEVICE=${partition}
+      mount ${BOOT_DEVICE} "${MOUNT_POINT}/boot"
+      unset partitions[${REPLY}]
+      break
+    done
+  }
+  mount_partitions
 }
-configure_device_partitioning
+configure_disk
