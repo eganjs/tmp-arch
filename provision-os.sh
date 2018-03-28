@@ -61,11 +61,12 @@ configure_device_partitioning() {
   select_device() {
     echo
     echo "Available devices:"
-    lsblk -dnlp | awk '{print $1,$4}' | column -t
+    lsblk -dnlp -I 8 | awk '{print $1,$4}' | column -t
     echo
     echo "Select a device to partition:"
-    devices=(`lsblk -dnlp | awk '{print $1}'`);
+    devices=(`lsblk -dnlp -I 8 | awk '{print $1}'`);
     select DEVICE in "${devices[@]}"; do
+      echo "Device ${DEVICE} selected"
       break
     done
   }
@@ -73,15 +74,12 @@ configure_device_partitioning() {
   gdisk ${DEVICE}
   format_partitions() {
     options=("boot" "swap" "ext4" "skip")
-    partitions=(`lsblk -nlp ${DEVICE} | awk '$6 == "part" {print $1,$4}'`);
     echo
     echo "Available partitions:"
-    echo ${partitions} | column -t
-    echo ${partitions}
-    partitions=(`echo ${partitions} | awk '{print $1}'`)
-    echo ${partitions}
+    lsblk -nlp -I 8 ${DEVICE} | awk '$6 == "part" {print $1,$4}' | column -t
     echo
     echo "Configuring partition formatting..."
+    partitions=(`lsblk -nlp ${DEVICE} | awk '$6 == "part" {print $1}'`)
     for partition in ${partitions[@]}; do
       echo
       echo "Select format for device: ${partition}"
