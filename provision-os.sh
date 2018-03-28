@@ -133,7 +133,6 @@ configure_disk() {
     }
     mount_partition "root" "/"
     mount_partition "boot" "/boot"
-    echo "R: ${ROOT_DEVICE}"
   }
   mount_partitions
 }
