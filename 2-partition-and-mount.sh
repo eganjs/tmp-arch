@@ -34,7 +34,6 @@ select_device() {
 select_device
 
 gdisk ${DEVICE}
-partpr
 
 format_partitions() {
   options=("boot" "swap" "ext4" "skip")
