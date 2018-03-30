@@ -102,7 +102,7 @@ print_title "Configuring initial ramdisk..."
 print_title "Configuring bootloader..."
 {
 	sys_exec "bootctl --path=/boot install"
-	root_device=`lsblk -nlp | awk "\$7 == ${MOUNT_POINT} {print \$1}"`
+	root_device=`lsblk -nlp | awk '$7 == '${MOUNT_POINT}' {print $1}'`
 	root_device_partuuid=`blkid -s PARTUUID ${root_device} | awk 'match($2, /"([^"]+)/, g) {print g[1]}'`
 	cat <<- EOF > ${MOUNT_POINT}/boot/loader/entries/arch.conf
 		title	Arch Linux
