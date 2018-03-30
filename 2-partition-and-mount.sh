@@ -7,7 +7,7 @@ MOUNT_POINT="/mnt"
 
 umount_partitions() {
   swapoff -a
-  mounts=(`lsblk -nlp | awk "\$7 ~ /^\\${MOUNT_POINT}/ {print \$7}" | sort -r`)
+  mounts=(`lsblk -nlp | awk '$7 ~ /^\'${MOUNT_POINT}'/ {print \$7}' | sort -r`)
   for mount in ${mounts[@]}; do
     umount ${mount}
   done
