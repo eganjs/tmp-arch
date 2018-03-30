@@ -77,6 +77,15 @@ format_partitions() {
 }
 format_partitions
 
+umount_partitions() {
+  swapoff -a
+  mounts=(`lsblk -nlp | awk "\$7 ~/^\\${MOUNT_POINT}/ {print \$7}" | sort -r`)
+  for mount in ${mounts[@]}; do
+    umount ${mount}
+  done
+}
+umount_partitions
+
 mount_partitions() {
   lsblk -nlp -I 8 ${DEVICE} | awk '$6 == "part" {print $1,$4}' | column -t
   partitions=(`lsblk -nlp -I 8 ${DEVICE} | awk '$6 == "part" {print $1}'`)
