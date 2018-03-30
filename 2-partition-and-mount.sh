@@ -82,22 +82,39 @@ mount_partitions() {
   partitions=(`lsblk -nlp -I 8 ${DEVICE} | awk '$6 == "part" {print $1}'`)
   mount_partition() {
     echo
-    echo "Select a partition to mount as $1 ($2):"
+    echo "Select a partition to mount at ($1):"
     select partition in ${partitions[@]}; do
       device=${partition}
-      mount_point="${MOUNT_POINT}$2"
+      mount_point="${MOUNT_POINT}$1"
       mkdir -p ${mount_point}
       mount ${device} ${mount_point}
       REPLY=$(( $REPLY - 1 ))
       unset partitions[REPLY]
       partitions=("${partitions[@]}")
-      if [[ "$1" == "root" ]]; then
+      if [[ "$1" == "/" ]]; then
         ROOT_DEVICE=${device}
       fi
       break
     done
   }
-  mount_partition "root" "/"
-  mount_partition "boot" "/boot"
+  mount_partition "/"
+  mount_partition "/boot"
+  mount_additional_partitions() {
+    options=("mount an additional partition" "skip")
+    while [[ ${partitions[@]} ]]; do
+      select option in ${options[@]}; do
+        case $REPLY in
+          1)
+            read -p "Enter full mount path: " mount_path
+            mount_partition ${mount_path}
+            break
+            ;;
+          2)
+            return
+            ;;
+        esac
+      done
+    done
+  }
 }
 mount_partitions
