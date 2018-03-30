@@ -1,22 +1,9 @@
 #!/bin/sh -e
 
-UEFI=0
 DEVICE=""
 ROOT_DEVICE=""
 MOUNT_POINT="/mnt"
 
-
-detect_uefi() {
-  echo
-  echo "Checking for UEFI..."
-  if [ -d "/sys/firmware/efi/efivars" ]; then
-    echo "UEFI detected"
-    UEFI=1
-  else
-    echo "UEFI not found"
-  fi
-}
-detect_uefi
 
 echo
 echo "Configuring disk..."
@@ -79,7 +66,7 @@ format_partitions
 
 umount_partitions() {
   swapoff -a
-  mounts=(`lsblk -nlp | awk "\$7 ~/^\\${MOUNT_POINT}/ {print \$7}" | sort -r`)
+  mounts=(`lsblk -nlp | awk "\$7 ~ /^\\${MOUNT_POINT}/ {print \$7}" | sort -r`)
   for mount in ${mounts[@]}; do
     umount ${mount}
   done
