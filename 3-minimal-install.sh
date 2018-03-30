@@ -59,14 +59,6 @@ print_title "Configuring fstab..."
 	genfstab -p ${MOUNT_POINT} >> ${MOUNT_POINT}/etc/fstab
 }
 
-print_title "Configuring hostname..."
-{
-	read -p "Enter hostname: " hostname
-	cat <<- EOF > ${MOUNT_POINT}/etc/hostname
-		${hostname}
-	EOF
-}
-
 print_title "Configuring timezone..."
 {
 	sys_exec "ln -sf /usr/share/zoneinfo/UTC /etc/localtime"
@@ -102,7 +94,7 @@ print_title "Configuring initial ramdisk..."
 print_title "Configuring bootloader..."
 {
 	sys_exec "bootctl --path=/boot install"
-	root_device=`lsblk -nlp | awk '$7 == '${MOUNT_POINT}' {print $1}'`
+	root_device=`lsblk -nlp | awk '$7 == "'${MOUNT_POINT}'" {print $1}'`
 	root_device_partuuid=`blkid -s PARTUUID ${root_device} | awk 'match($2, /"([^"]+)/, g) {print g[1]}'`
 	cat <<- EOF > ${MOUNT_POINT}/boot/loader/entries/arch.conf
 		title	Arch Linux
@@ -115,4 +107,17 @@ print_title "Configuring bootloader..."
 		timeout	4
 		editor	0
 	EOF
+}
+
+print_title "Configuring hostname..."
+{
+	read -p "Enter hostname: " hostname
+	cat <<- EOF > ${MOUNT_POINT}/etc/hostname
+		${hostname}
+	EOF
+}
+
+print_title "Configuring password for root user..."
+{
+	sys_exec "passwd"
 }
