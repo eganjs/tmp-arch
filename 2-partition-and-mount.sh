@@ -5,6 +5,15 @@ ROOT_DEVICE=""
 MOUNT_POINT="/mnt"
 
 
+umount_partitions() {
+  swapoff -a
+  mounts=(`lsblk -nlp | awk "\$7 ~ /^\\${MOUNT_POINT}/ {print \$7}" | sort -r`)
+  for mount in ${mounts[@]}; do
+    umount ${mount}
+  done
+}
+umount_partitions
+
 echo
 echo "Configuring disk..."
 echo
@@ -25,6 +34,7 @@ select_device() {
 select_device
 
 gdisk ${DEVICE}
+partpr
 
 format_partitions() {
   options=("boot" "swap" "ext4" "skip")
@@ -63,15 +73,6 @@ format_partitions() {
   done
 }
 format_partitions
-
-umount_partitions() {
-  swapoff -a
-  mounts=(`lsblk -nlp | awk "\$7 ~ /^\\${MOUNT_POINT}/ {print \$7}" | sort -r`)
-  for mount in ${mounts[@]}; do
-    umount ${mount}
-  done
-}
-umount_partitions
 
 mount_partitions() {
   lsblk -nlp -I 8 ${DEVICE} | awk '$6 == "part" {print $1,$4}' | column -t
