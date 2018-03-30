@@ -116,5 +116,6 @@ mount_partitions() {
       done
     done
   }
+  mount_additional_partitions
 }
 mount_partitions
