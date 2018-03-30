@@ -100,8 +100,10 @@ mount_partitions() {
   mount_partition "/"
   mount_partition "/boot"
   mount_additional_partitions() {
-    options=("mount an additional partition" "skip")
+    options=("continue" "stop")
     while [[ ${partitions[@]} ]]; do
+      echo
+      echo "Mount additional partitions:"
       select option in ${options[@]}; do
         case $REPLY in
           1)
