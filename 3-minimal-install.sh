@@ -4,6 +4,7 @@ MOUNT_POINT="/mnt"
 
 KEYMAP="uk"
 LOCALE="en_GB.UTF-8"
+EDITOR="vim"
 
 install_pkg() {
 	pacman -S --needed --noconfirm $@
@@ -52,6 +53,14 @@ print_title "Installing base system..."
 {
 	install_pkg archlinux-keyring
 	sys_install_pkg base base-devel linux-headers
+}
+
+print_title "Installing editor..."
+{
+	sys_install_pkg ${EDITOR}
+	cat <<- EOF > ${MOUNT_POINT}/etc/profile.d/editor.sh
+		export EDITOR=${EDITOR}
+	EOF
 }
 
 print_title "Configuring networking..."
