@@ -20,17 +20,16 @@ sys_user_exec() {
 		root	ALL=(ALL) ALL
 		%nobody	ALL=(ALL) NOPASSWD: ALL
 	EOF
-	command=`printf "%q" "$1"`
-	sys_exec "su - nobody -s /bin/sh -c \"${command}\""
+	sys_exec "su - nobody -s /bin/sh -c \"${1}\""
 	sys_exec "mv /etc/sudoers.bk /etc/sudoers"
 }
 
 sys_aur_install_pkg() {
 	for pkg in $@; do
 		sys_user_exec "
-			temp_folder=mktemp -d --suffix=-${pkg}
-			curl https://aur.archlinux.org/cgit/aur.git/snapshot/${pkg}.tar.gz | tar zxvf - -C \${temp_folder}
-			cd \${temp_folder}/${pkg}
+			mkdir -p /tmp/${pkg}
+			curl https://aur.archlinux.org/cgit/aur.git/snapshot/${pkg}.tar.gz | tar zxvf - -C /tmp/${pkg}
+			cd /tmp/${pkg}/${pkg}
 			makepkg -csi --noconfirm
 		"
 	done
