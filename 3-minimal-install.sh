@@ -30,9 +30,13 @@ sys_user_exec() {
 
 sys_aur_install_pkg() {
 	for pkg in $@; do
+		echo "[D 0]: ${pkg}"
 		temp_folder=`sys_user_exec "mktemp -d --suffix=${pkg}"`
+		echo "[D 1]: ${temp_folder}"
 		sys_user_exec "curl https://aur.archlinux.org/cgit/aur.git/snapshot/${pkg}.tar.gz | tar zxvf - -C ${temp_folder}"
+		echo "[D 2]: "`ls ${MOUNT_POINT}/${temp_folder}`
 		sys_user_exec "cd ${temp_folder}/${pkg}; makepkg -csi --noconfirm"
+		echo "[D 3]: "`ls ${MOUNT_POINT}/${temp_folder}/${pkg}`
 	done
 }
 
