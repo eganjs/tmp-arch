@@ -17,12 +17,31 @@ sys_exec() {
 	arch-chroot ${MOUNT_POINT} /bin/sh -c "$1"
 }
 
+sys_user_exec() {
+	sys_exec "mv /etc/sudoers /etc/sudoers.bk"
+	cat <<- EOF > ${MOUNT_POINT}/etc/sudoers
+		root	ALL=(ALL) ALL
+		%nobody	ALL=(ALL) NOPASSWD: ALL
+	EOF
+	command=`printf "%q" "$1"`
+	sys_exec "su - nobody -s /bin/sh -c \"${command}\""
+	sys_exec "mv /etc/sudoers.bk /etc/sudoers"
+}
+
+sys_aur_install_pkg() {
+	for pkg in $@; do
+		temp_folder=`sys_user_exec "mktemp -d --suffix=${pkg}"`
+		sys_user_exec "curl https://aur.archlinux.org/cgit/aur.git/snapshot/${pkg}.tar.gz | tar zxvf - -C ${temp_folder}"
+		sys_user_exec "cd ${temp_folder}/${pkg}; makepkg -csi --noconfirm"
+	done
+}
+
 print_title() {
 	echo
 	echo $(tput bold)$(tput setaf 6)${1}$(tput sgr0)
 }
 
-print_title "Syncing pkg dbs..."
+print_title "Syncing pkg db..."
 {
 	pacman -Sy
 }
@@ -86,8 +105,17 @@ print_title "Configuring locale..."
 	sys_exec "locale-gen"
 }
 
+print_title "Configuring sudoers file..."
+{
+	cat <<- EOF > ${MOUNT_POINT}/etc/sudoers
+		root	ALL=(ALL) ALL
+		%wheel	ALL=(ALL) NOPASSWD: ALL
+	EOF
+}
+
 print_title "Configuring initial ramdisk..."
 {
+	sys_aur_install_pkg aic94xx-firmware wd719x-firmware
 	sys_exec "mkinitcpio -p linux"
 }
 
