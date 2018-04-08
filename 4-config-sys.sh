@@ -41,13 +41,13 @@ print_title "Syncing pkg db and checking for updates..."
 	run_as_user ${AUR_HELPER} -Syu --noconfirm
 }
 
-print_title "Installing X11"
+print_title "Installing X11..."
 {
 	install_pkg xorg-server xorg-server-xwayland xorg-apps xorg-xinit xorg-xkill xorg-xinput xf86-input-libinput
 	install_pkg mesa
 }
 
-print_title "Installing i3"
+print_title "Installing i3..."
 {
 	install_pkg i3 dmenu
 	cat <<- EOF > ${USER_HOME}/.xinitrc
@@ -55,7 +55,7 @@ print_title "Installing i3"
 	EOF
 }
 
-print_title "Installing zsh"
+print_title "Installing zsh..."
 {
 	install_pkg zsh oh-my-zsh-git
 	cp /usr/share/oh-my-zsh-git/zshrc ${USER_HOME}/.zshrc
