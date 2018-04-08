@@ -5,7 +5,8 @@ USER_HOME=/home/${USERNAME}
 AUR_HELPER="trizen"
 
 run_as_user() {
-	su - ${USERNAME} sh -c "$@"
+	command="$@"
+	su - ${USERNAME} sh -c "${command}"
 }
 
 install_pkg() {
