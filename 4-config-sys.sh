@@ -19,10 +19,10 @@ print_title() {
 
 print_title "Creating user..."
 {
-	read -p "Username: " USERNAME
+	#read -p "Username: " USERNAME
 	USERNAME=`echo ${USERNAME} | tr '[:upper:]' '[:lower:]'`
 	useradd -m -g users -G wheel -s /bin/bash ${USERNAME}
-	chfn ${USERNAME}
+	#chfn ${USERNAME}
 	passwd ${USERNAME}
 }
 
