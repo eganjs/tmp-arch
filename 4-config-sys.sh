@@ -59,6 +59,6 @@ print_title "Installing i3..."
 print_title "Installing zsh..."
 {
 	install_pkg zsh oh-my-zsh-git
-	cp /usr/share/oh-my-zsh-git/zshrc ${USER_HOME}/.zshrc
+	cp /usr/share/oh-my-zsh/zshrc ${USER_HOME}/.zshrc
 	chsh ${USERNAME} -s /bin/zsh
 }
