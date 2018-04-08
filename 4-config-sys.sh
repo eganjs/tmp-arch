@@ -1,14 +1,15 @@
 #!/bin/sh -e
 
 USERNAME="eganjs"
+USER_HOME=/home/${USERNAME}
 AUR_HELPER="trizen"
 
-aur_helper() {
-	su - ${USERNAME} sh -c "${AUR_HELPER} $@"
+run_as_user() {
+	su - ${USERNAME} sh -c "$@"
 }
 
 install_pkg() {
-	aur_helper -S --needed --noconfirm $@
+	run_as_user ${AUR_HELPER} -S --needed --noconfirm $@
 }
 
 print_title() {
@@ -35,9 +36,9 @@ print_title "Installing AUR helper..."
 	"
 }
 
-print_title "Syncing pkg db..."
+print_title "Syncing pkg db and checking for updates..."
 {
-	aur_helper -Syu --noconfirm
+	run_as_user ${AUR_HELPER} -Syu --noconfirm
 }
 
 print_title "Installing X11"
@@ -49,4 +50,14 @@ print_title "Installing X11"
 print_title "Installing i3"
 {
 	install_pkg i3 dmenu
+	cat <<- EOF > ${USER_HOME}/.xinitrc
+		exec i3
+	EOF
+}
+
+print_title "Installing zsh"
+{
+	install_pkg zsh oh-my-zsh-git
+	cp /usr/share/oh-my-zsh-git/zshrc ${USER_HOME}/.zshrc
+	chsh ${USERNAME} -s /bin/zsh
 }
